@@ -18,10 +18,7 @@ if (mysqli_num_rows($query) == 1) {
 
     $user = mysqli_fetch_assoc($query);
 
-    /*
-     * Password database sebaiknya dibuat menggunakan password_hash()
-     */
-    if (password_verify($password, $user['password'])) {
+    if ($password === $user['password']) {
 
         $_SESSION['id']    = $user['id'];
         $_SESSION['name']  = $user['name'];
@@ -39,7 +36,6 @@ if (mysqli_num_rows($query) == 1) {
               </script>";
         exit;
     }
-
 } else {
 
     echo "<script>
