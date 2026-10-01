@@ -38,13 +38,13 @@ $role = $_SESSION['role'];
                 </li>
 
                 <li class="nav-item mb-2">
-                    <a href="#" class="nav-link text-white">
+                    <a href="data_siswa.php" class="nav-link text-white">
                         Data Siswa
                     </a>
                 </li>
 
                 <li class="nav-item mb-2">
-                    <a href="#" class="nav-link text-white">
+                    <a href="data_guru.php" class="nav-link text-white">
                         Data Guru
                     </a>
                 </li>
