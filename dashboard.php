@@ -12,7 +12,7 @@ $role = $_SESSION['role'];
 
 $menu = $_GET['menu'] ?? 'dashboard';
 
-$menus = ['dashboard', 'siswa', 'guru', 'kelas', 'laporan'];
+$menus = ['dashboard', 'siswa','tahun_ajaran', 'guru', 'kelas', 'laporan'];
 
 if (!in_array($menu, $menus, true)) {
     $menu = 'dashboard';
@@ -101,7 +101,12 @@ if (!in_array($menu, $menus, true)) {
                 Data Siswa
             </a>
         </li>
-
+                <li class="nav-item">
+            <a href="kelola_tahun_ajaran.php"
+               class="nav-link <?= $menu == 'tahun_ajaran' ? 'active' : '' ?>">
+                Tahun Ajaran
+            </a>
+        </li>
         <li class="nav-item">
             <a href="dashboard.php?menu=guru"
                class="nav-link <?= $menu == 'guru' ? 'active' : '' ?>">
@@ -115,7 +120,7 @@ if (!in_array($menu, $menus, true)) {
                 Kelas
             </a>
         </li>
-
+   
         <li class="nav-item">
             <a href="dashboard.php?menu=laporan"
                class="nav-link <?= $menu == 'laporan' ? 'active' : '' ?>">
