@@ -1,47 +1,35 @@
 <?php
-
+//proses_login.php
 session_start();
+include 'config/koneksi.php';
 
-include "config/koneksi.php";
-
-$email    = $_POST['email'];
+$email = mysqli_real_escape_string($koneksi, $_POST['email']);
 $password = $_POST['password'];
 
-$email = mysqli_real_escape_string($koneksi, $email);
+$sql = "SELECT * FROM t_users WHERE email = '$email'";
+$hasil = mysqli_query($koneksi,$sql);
 
-$query = mysqli_query(
-    $koneksi,
-    "SELECT * FROM t_users WHERE email = '$email' LIMIT 1"
-);
+if (mysqli_num_rows($hasil) == 1) {
+    $data = mysqli_fetch_assoc($hasil);
 
-if (mysqli_num_rows($query) == 1) {
+    if (password_verify($password,$data['password'])) {
+        //password cocok,buat session
+        $_SESSION['login']=true;
+        $_SESSION['id']=$data['id'];
+        $_SESSION['name']=$data['name'];
+        $_SESSION['role']=$data['role'];
 
-    $user = mysqli_fetch_assoc($query);
 
-    if ($password === $user['password']) {
-
-        $_SESSION['id']    = $user['id'];
-        $_SESSION['name']  = $user['name'];
-        $_SESSION['email'] = $user['email'];
-        $_SESSION['role']  = strtolower($user['role']);
-
-        header("Location: dashboard.php");
+        header('Location: dashboard.php');
         exit;
-
     } else {
-
-        echo "<script>
-                alert('Password salah!');
-                window.location='login.php';
-              </script>";
-        exit;
+        $_SESSION['pesan_error'] = 'password salah!';
+        header('Location: login.php');
+       exit;
     }
-} else {
-
-    echo "<script>
-            alert('Email tidak ditemukan!');
-            window.location='login.php';
-          </script>";
+}else {
+    $_SESSION['pesan_eror'] = 'Email tidak ditemukan!';
+    header('Location: login.php');
     exit;
 }
 ?>
