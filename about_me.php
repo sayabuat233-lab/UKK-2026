@@ -2,7 +2,7 @@
 session_start();
 include "config/koneksi.php";
 
-$nama = "Raja Kadu";
+$nama = "Nazril Ilham";
 $kelas = "XII RPL";
 $sekolah = "SMK Muhammadiyah Tasikmalaya";
 $jurusan = "Rekayasa Perangkat Lunak";
@@ -50,10 +50,10 @@ $hobi = "Baca Buku";
 
                 <div class="profile-photo-wrapper">
                     <img
-                        src="foto-profil.jpg"
+                        src="pppnazril.jpeg"
                         alt="Foto "
                         class="profile-photo"
-                        onerror="this.onerror=null;this.src='foto-profil.png';"
+                        onerror="this.onerror=null;this.src='pppnazril.jpeg';"
                     >
                 </div>
 
