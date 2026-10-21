@@ -1,39 +1,49 @@
 <?php
-// hapus_siswa.php
-session_start();
-
-include 'includes/cek_session.php';
-include 'config/koneksi.php';
-
-$id = $_GET['id'];
-
-// Ambil nama siswa sebelum dihapus
-$cek = mysqli_query(
-    $koneksi,
-    "SELECT nama FROM t_siswa WHERE id = '$id'"
-);
-
-$data = mysqli_fetch_assoc($cek);
-
-// Hapus data siswa
-$sql = "DELETE FROM t_siswa WHERE id = '$id'";
-
-if (mysqli_query($koneksi, $sql)) {
-
-    $id_user = $_SESSION['id_user'];
-    $waktu = date('Y-m-d H:i:s');
-
-    $aktivitas = "hapus siswa: " . $data['nama'];
-
-    // Simpan aktivitas ke tabel log
-    $log = "INSERT INTO tbl_log
-            (id_user, aktivitas, waktu)
-            VALUES
-            ('$id_user', '$aktivitas', '$waktu')";
-
-    mysqli_query($koneksi, $log);
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
 
-header('Location: kelola_siswa.php');
-exit;
+// Cek session login
+if (!isset($_SESSION['id'])) {
+    header("Location: login.php");
+    exit;
+}
+
+// Koneksi database
+include 'config/koneksi.php';
+
+// Ambil ID siswa dari URL
+if (!isset($_GET['id']) || empty($_GET['id'])) {
+    die("ID siswa tidak ditemukan.");
+}
+
+$id = (int) $_GET['id'];
+
+// Cek apakah siswa tersedia
+$cek = mysqli_query(
+    $koneksi,
+    "SELECT id FROM t_siswa WHERE id = $id"
+);
+
+if (!$cek) {
+    die("Gagal memeriksa data: " . mysqli_error($koneksi));
+}
+
+if (mysqli_num_rows($cek) == 0) {
+    die("Data siswa tidak ditemukan.");
+}
+
+// Hapus data siswa
+$hapus = mysqli_query(
+    $koneksi,
+    "DELETE FROM t_siswa WHERE id = $id"
+);
+
+if ($hapus) {
+    header("Location: data_siswa.php?pesan=hapus_berhasil");
+    exit;
+} else {
+    echo "Gagal menghapus data siswa: ";
+    echo mysqli_error($koneksi);
+}
 ?>

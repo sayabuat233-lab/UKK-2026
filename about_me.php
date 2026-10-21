@@ -3,10 +3,10 @@ session_start();
 include "config/koneksi.php";
 
 $nama = "Nazril Ilham";
-$kelas = "XII RPL";
+$kelas = "XII RPL 2";
 $sekolah = "SMK Muhammadiyah Tasikmalaya";
 $jurusan = "Rekayasa Perangkat Lunak";
-$hobi = "Baca Buku";
+$hobi = "main bola";
 ?>
 
 <!DOCTYPE html>
