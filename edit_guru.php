@@ -1,101 +1,386 @@
+```php
 <?php
 // edit_guru.php
 include 'includes/cek_session.php';
 include 'config/koneksi.php';
 
-$id = $_GET['id'];
+if (!isset($_GET['id']) || !ctype_digit($_GET['id'])) {
+    header("Location: kelola_guru.php");
+    exit;
+}
 
-$sql = "SELECT * FROM t_guru WHERE id = '$id'";
+$id = (int) $_GET['id'];
+
+$sql = "SELECT * FROM t_guru WHERE id = $id";
 $hasil = mysqli_query($koneksi, $sql);
+
+if (!$hasil || mysqli_num_rows($hasil) == 0) {
+    header("Location: kelola_guru.php");
+    exit;
+}
+
 $data = mysqli_fetch_assoc($hasil);
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="id">
+
 <head>
-    <title>Edit Guru</title>
-    <link rel="stylesheet" href="layout/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Edit Guru - Pelanggaran Siswa</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <style>
+        body {
+            margin: 0;
+            background-color: #f3f5fb;
+            font-family: Arial, sans-serif;
+        }
+
+        /* SIDEBAR TETAP */
+        .sidebar {
+            width: 292px;
+            height: 100vh;
+            background-color: #212529;
+            color: white;
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding: 0 15px;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .sidebar-title {
+            font-size: 21px;
+            color: white;
+            padding: 5px 0 20px;
+            margin: 0;
+        }
+
+        .sidebar .nav-link {
+            color: white;
+            padding: 10px 15px;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .sidebar .nav-link:hover {
+            background-color: #343a40;
+            color: white;
+        }
+
+        .sidebar .nav-link.active {
+            background-color: #0d6efd;
+            color: white;
+        }
+
+        .sidebar hr {
+            border-color: #454545;
+            margin-top: 20px;
+            margin-bottom: 15px;
+        }
+
+        .sidebar .logout {
+            color: #dc3545;
+        }
+
+        /* KONTEN UTAMA */
+        .main-content {
+            margin-left: 292px;
+            padding: 20px 22px;
+            min-height: 100vh;
+        }
+
+        .page-title {
+            font-size: 36px;
+            font-weight: 400;
+            color: #172b4d;
+            margin-bottom: 25px;
+        }
+
+        .form-card {
+            background: white;
+            border: 1px solid #d6d6d6;
+            border-radius: 7px;
+            padding: 25px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: #212529;
+        }
+
+        .form-control,
+        .form-select {
+            padding: 10px 12px;
+            border-radius: 5px;
+        }
+
+        .btn {
+            border-radius: 5px;
+            padding: 9px 16px;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 220px;
+            }
+
+            .main-content {
+                margin-left: 220px;
+                padding: 15px;
+            }
+
+            .page-title {
+                font-size: 28px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .sidebar {
+                width: 180px;
+                padding: 0 8px;
+            }
+
+            .sidebar-title {
+                font-size: 17px;
+            }
+
+            .sidebar .nav-link {
+                font-size: 12px;
+                padding: 9px;
+            }
+
+            .main-content {
+                margin-left: 180px;
+                padding: 12px;
+            }
+
+            .form-card {
+                padding: 15px;
+            }
+
+            .page-title {
+                font-size: 24px;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-    <h1>Edit Guru</h1>
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
 
-    <form action="proses_edit_guru.php" method="POST">
+        <h5 class="sidebar-title">Pelanggaran Siswa</h5>
 
-        <input type="hidden" name="id" value="<?php echo $data['id']; ?>">
+        <nav class="nav flex-column">
 
-        <table>
+            <a href="dashboard.php" class="nav-link">
+                Dashboard
+            </a>
 
-            <tr>
-                <td>NIP</td>
-                <td>:</td>
-                <td>
-                    <input type="text" name="nip"
-                        value="<?php echo $data['nip']; ?>" required>
-                </td>
-            </tr>
+            <a href="kelola_siswa.php" class="nav-link">
+                Data Siswa
+            </a>
 
-            <tr>
-                <td>Nama Guru</td>
-                <td>:</td>
-                <td>
-                    <input type="text" name="nama"
-                        value="<?php echo $data['nama']; ?>" required>
-                </td>
-            </tr>
+            <a href="kelola_guru.php" class="nav-link active">
+                Data Guru
+            </a>
 
-            <tr>
-                <td>Email</td>
-                <td>:</td>
-                <td>
-                    <input type="email" name="email"
-                        value="<?php echo $data['email']; ?>" required>
-                </td>
-            </tr>
+            <a href="kelola_kelas.php" class="nav-link">
+                Data Kelas
+            </a>
 
-            <tr>
-                <td>Status Aktif</td>
-                <td>:</td>
-                <td>
-                    <select name="status_aktif" required>
+            <a href="kelola_tahun_ajaran.php" class="nav-link">
+                Data Tahun Ajaran
+            </a>
 
-                        <option value="1"
-                            <?php if ($data['status_aktif'] == 1) echo 'selected'; ?>>
-                            Aktif
-                        </option>
+            <a href="kelola_walikelas.php" class="nav-link">
+                Data Wali Kelas
+            </a>
 
-                        <option value="0"
-                            <?php if ($data['status_aktif'] == 0) echo 'selected'; ?>>
-                            Tidak Aktif
-                        </option>
+            <a href="penempatan_siswa.php" class="nav-link">
+                Penempatan Siswa
+            </a>
 
-                    </select>
-                </td>
-            </tr>
+            <a href="kategori_pelanggaran.php" class="nav-link">
+                Kategori Pelanggaran
+            </a>
 
-            <tr>
-                <td>User ID</td>
-                <td>:</td>
-                <td>
-                    <input type="number" name="user_id"
-                        value="<?php echo $data['user_id']; ?>">
-                </td>
-            </tr>
+            <a href="about.php" class="nav-link">
+                About Me
+            </a>
 
-            <tr>
-                <td colspan="3">
-                    <input type="submit" value="Update">
-                </td>
-            </tr>
+            <hr>
 
-        </table>
+            <a href="logout.php" class="nav-link logout"
+               onclick="return confirm('Yakin ingin logout?')">
+                Logout
+            </a>
 
-    </form>
+        </nav>
 
-    <p>
-        <a href="kelola_guru.php">Kembali ke Kelola Guru</a>
-    </p>
+    </aside>
+
+    <!-- KONTEN UTAMA -->
+    <main class="main-content">
+
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+
+            <h1 class="page-title mb-0">Edit Guru</h1>
+
+            <a href="kelola_guru.php" class="btn btn-primary">
+                Kembali ke Data Guru
+            </a>
+
+        </div>
+
+        <!-- FORM EDIT GURU -->
+        <div class="form-card">
+
+            <h5 class="mb-1">Form Edit Guru</h5>
+
+            <p class="text-secondary mb-4">
+                Ubah informasi guru sesuai data terbaru.
+            </p>
+
+            <form action="proses_edit_guru.php" method="POST">
+
+                <input type="hidden" name="id"
+                       value="<?= htmlspecialchars((string) $data['id']) ?>">
+
+                <div class="row g-3">
+
+                    <!-- NIP -->
+                    <div class="col-md-6">
+
+                        <label for="nip" class="form-label">NIP</label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="nip"
+                            name="nip"
+                            value="<?= htmlspecialchars($data['nip'] ?? '') ?>"
+                            placeholder="Masukkan NIP guru"
+                            required>
+
+                    </div>
+
+                    <!-- NAMA GURU -->
+                    <div class="col-md-6">
+
+                        <label for="nama" class="form-label">Nama Guru</label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="nama"
+                            name="nama"
+                            value="<?= htmlspecialchars($data['nama'] ?? '') ?>"
+                            placeholder="Masukkan nama guru"
+                            required>
+
+                    </div>
+
+                    <!-- EMAIL -->
+                    <div class="col-md-6">
+
+                        <label for="email" class="form-label">Email</label>
+
+                        <input
+                            type="email"
+                            class="form-control"
+                            id="email"
+                            name="email"
+                            value="<?= htmlspecialchars($data['email'] ?? '') ?>"
+                            placeholder="contoh@email.com"
+                            required>
+
+                    </div>
+
+                    <!-- STATUS AKTIF -->
+                    <div class="col-md-6">
+
+                        <label for="status_aktif" class="form-label">
+                            Status Aktif
+                        </label>
+
+                        <select
+                            class="form-select"
+                            id="status_aktif"
+                            name="status_aktif"
+                            required>
+
+                            <option value="1"
+                                <?= $data['status_aktif'] == 1 ? 'selected' : '' ?>>
+                                Aktif
+                            </option>
+
+                            <option value="0"
+                                <?= $data['status_aktif'] == 0 ? 'selected' : '' ?>>
+                                Tidak Aktif
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <!-- USER ID -->
+                    <div class="col-md-6">
+
+                        <label for="user_id" class="form-label">
+                            User ID
+                        </label>
+
+                        <input
+                            type="number"
+                            class="form-control"
+                            id="user_id"
+                            name="user_id"
+                            value="<?= htmlspecialchars((string) ($data['user_id'] ?? '')) ?>"
+                            placeholder="Masukkan User ID">
+
+                        <div class="form-text">
+                            Isi sesuai ID pengguna yang terhubung dengan guru.
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <hr class="my-4">
+
+                <!-- TOMBOL -->
+                <div class="d-flex justify-content-end gap-2 flex-wrap">
+
+                    <a href="kelola_guru.php" class="btn btn-secondary">
+                        Batal
+                    </a>
+
+                    <button type="submit" class="btn btn-primary">
+                        Update Data Guru
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>
+```

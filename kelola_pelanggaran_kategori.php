@@ -44,7 +44,7 @@ if (!$hasil) {
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h1>Kelola Kategori Pelanggaran</h1>
 
-                <a href="tambah_kategori_pelanggaran.php"
+                <a href="tambah_pelanggaran_kategori.php"
                    class="btn btn-primary">
                     + Tambah Kategori Pelanggaran
                 </a>

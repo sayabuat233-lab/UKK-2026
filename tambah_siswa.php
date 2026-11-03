@@ -1,100 +1,252 @@
+
 <?php
 // tambah_siswa.php
+
 include 'includes/cek_session.php';
+include 'config/koneksi.php';
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="id">
 
 <head>
-    <title>Tambah Siswa</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Tambah Data Siswa</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+
     <link rel="stylesheet" href="layout/style.css">
+
+    <style>
+        body {
+            margin: 0;
+            background: #f4f6fb;
+            font-family: Arial, sans-serif;
+            color: #17233f;
+        }
+
+        .siswa-content {
+            padding: 30px !important;
+            min-height: 100vh;
+            min-width: 0;
+        }
+
+        .page-header {
+            margin-bottom: 25px;
+        }
+
+        .page-header h2 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .page-header p {
+            color: #778198;
+        }
+
+        .form-card {
+            background: #fff;
+            border: 1px solid #e8ecf4;
+            border-radius: 12px;
+            padding: 28px;
+            max-width: 900px;
+            width: 100%;
+            box-shadow: 0 5px 20px rgba(23, 35, 63, .05);
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #343a40;
+        }
+
+        .form-control,
+        .form-select {
+            padding: 11px 13px;
+            border: 1px solid #dce2ec;
+            border-radius: 8px;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #3659d9;
+            box-shadow: 0 0 0 3px rgba(54, 89, 217, .12);
+        }
+
+        .btn {
+            padding: 10px 22px;
+            border-radius: 8px;
+        }
+
+        .btn-primary {
+            background: #3659d9;
+            border-color: #3659d9;
+        }
+
+        @media (max-width: 767px) {
+            .siswa-content {
+                padding: 20px 15px !important;
+            }
+
+            .form-card {
+                padding: 18px;
+            }
+
+            .page-header h2 {
+                font-size: 23px;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-    <h1>Tambah Siswa</h1>
+<div class="container-fluid">
+    <div class="row g-0">
 
-    <form action="proses_tambah_siswa.php" method="POST">
+        <!-- SIDEBAR -->
+        <?php include 'layout/sidebar.php'; ?>
 
-        <table>
+        <!-- KONTEN -->
+        <main class="col-md-9 col-lg-10 siswa-content">
 
-            <tr>
-                <td>NIS</td>
-                <td>:</td>
-                <td>
-                    <input type="text" name="nis" required>
-                </td>
-            </tr>
+            <div class="page-header">
+                <h2>Tambah Data Siswa</h2>
+                <p class="mb-0">
+                    Tambahkan data siswa ke dalam sistem pelanggaran siswa.
+                </p>
+            </div>
 
-            <tr>
-                <td>NISN</td>
-                <td>:</td>
-                <td>
-                    <input type="text" name="nisn" required>
-                </td>
-            </tr>
+            <?php if (isset($_SESSION['pesan_error'])) { ?>
+                <div class="alert alert-danger">
+                    <?= htmlspecialchars($_SESSION['pesan_error']) ?>
+                </div>
+                <?php unset($_SESSION['pesan_error']); ?>
+            <?php } ?>
 
-            <tr>
-                <td>Nama Siswa</td>
-                <td>:</td>
-                <td>
-                    <input type="text" name="nama" required>
-                </td>
-            </tr>
+            <div class="form-card">
 
-            <tr>
-                <td>Jenis Kelamin</td>
-                <td>:</td>
-                <td>
-                    <select name="jenis_kelamin" required>
-                        <option value="">-- Pilih --</option>
-                        <option value="L">Laki-laki</option>
-                        <option value="P">Perempuan</option>
-                    </select>
-                </td>
-            </tr>
+                <h5 class="mb-4">Formulir Data Siswa</h5>
 
-            <tr>
-                <td>Tanggal Lahir</td>
-                <td>:</td>
-                <td>
-                    <input type="date" name="tanggal_lahir" required>
-                </td>
-            </tr>
+                <form action="proses_tambah_siswa.php" method="POST">
 
-            <tr>
-                <td>Alamat</td>
-                <td>:</td>
-                <td>
-                    <textarea name="alamat" rows="4" cols="30" required></textarea>
-                </td>
-            </tr>
+                    <div class="mb-3">
+                        <label for="nis" class="form-label">NIS</label>
+                        <input
+                            type="text"
+                            name="nis"
+                            id="nis"
+                            class="form-control"
+                            maxlength="30"
+                            placeholder="Masukkan NIS"
+                            required>
+                    </div>
 
-            <tr>
-                <td>Status Aktif</td>
-                <td>:</td>
-                <td>
-                    <select name="status_aktif" required>
-                        <option value="1">Aktif</option>
-                        <option value="0">Tidak Aktif</option>
-                    </select>
-                </td>
-            </tr>
+                    <div class="mb-3">
+                        <label for="nisn" class="form-label">NISN</label>
+                        <input
+                            type="text"
+                            name="nisn"
+                            id="nisn"
+                            class="form-control"
+                            maxlength="20"
+                            placeholder="Masukkan NISN"
+                            required>
+                    </div>
 
-            <tr>
-                <td colspan="3">
-                    <input type="submit" value="Simpan">
-                </td>
-            </tr>
+                    <div class="mb-3">
+                        <label for="nama" class="form-label">Nama Siswa</label>
+                        <input
+                            type="text"
+                            name="nama"
+                            id="nama"
+                            class="form-control"
+                            maxlength="150"
+                            placeholder="Masukkan nama lengkap siswa"
+                            required>
+                    </div>
 
-        </table>
+                    <div class="mb-3">
+                        <label for="jenis_kelamin" class="form-label">
+                            Jenis Kelamin
+                        </label>
 
-    </form>
+                        <select
+                            name="jenis_kelamin"
+                            id="jenis_kelamin"
+                            class="form-select"
+                            required>
 
-    <p>
-        <a href="kelola_siswa.php">Kembali</a>
-    </p>
+                            <option value="">-- Pilih Jenis Kelamin --</option>
+                            <option value="L">Laki-laki</option>
+                            <option value="P">Perempuan</option>
+
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="tanggal_lahir" class="form-label">
+                            Tanggal Lahir
+                        </label>
+
+                        <input
+                            type="date"
+                            name="tanggal_lahir"
+                            id="tanggal_lahir"
+                            class="form-control"
+                            required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="alamat" class="form-label">Alamat</label>
+
+                        <textarea
+                            name="alamat"
+                            id="alamat"
+                            class="form-control"
+                            rows="4"
+                            placeholder="Masukkan alamat siswa"
+                            required></textarea>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="status_aktif" class="form-label">
+                            Status Siswa
+                        </label>
+
+                        <select
+                            name="status_aktif"
+                            id="status_aktif"
+                            class="form-select"
+                            required>
+
+                            <option value="1">Aktif</option>
+                            <option value="0">Tidak Aktif</option>
+
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        Simpan Data
+                    </button>
+
+                    <a href="kelola_siswa.php" class="btn btn-secondary">
+                        Kembali
+                    </a>
+
+                </form>
+
+            </div>
+
+        </main>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>
