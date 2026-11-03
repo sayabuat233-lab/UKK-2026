@@ -139,7 +139,7 @@ if (!$hasil) {
                 <table id="tabelTahunAjaran"
                        class="table table-striped table-bordered table-hover align-middle w-100">
 
-                    <thead>
+                    <thead class="table-dark">
                         <tr>
                             <th>ID</th>
                             <th>Nama Tahun Ajaran</th>
