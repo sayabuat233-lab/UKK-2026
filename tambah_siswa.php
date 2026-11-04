@@ -134,6 +134,7 @@ include 'config/koneksi.php';
 
                 <form action="proses_tambah_siswa.php" method="POST">
 
+                    <!-- NIS: maksimal 15 digit -->
                     <div class="mb-3">
                         <label for="nis" class="form-label">NIS</label>
                         <input
@@ -141,11 +142,15 @@ include 'config/koneksi.php';
                             name="nis"
                             id="nis"
                             class="form-control"
-                            maxlength="30"
-                            placeholder="Masukkan NIS"
+                            maxlength="15"
+                            pattern="[0-9]{1,15}"
+                            inputmode="numeric"
+                            placeholder="Masukkan NIS (maksimal 15 digit)"
+                            title="NIS harus berupa angka, maksimal 15 digit"
                             required>
                     </div>
 
+                    <!-- NISN: tepat 10 digit -->
                     <div class="mb-3">
                         <label for="nisn" class="form-label">NISN</label>
                         <input
@@ -153,8 +158,11 @@ include 'config/koneksi.php';
                             name="nisn"
                             id="nisn"
                             class="form-control"
-                            maxlength="20"
-                            placeholder="Masukkan NISN"
+                            maxlength="10"
+                            pattern="[0-9]{10}"
+                            inputmode="numeric"
+                            placeholder="Masukkan NISN (10 digit)"
+                            title="NISN harus tepat 10 digit angka"
                             required>
                     </div>
 

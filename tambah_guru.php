@@ -246,6 +246,7 @@ include 'config/koneksi.php';
 
                 <div class="row g-3">
 
+                    <!-- NIP MAKSIMAL 18 DIGIT -->
                     <div class="col-md-6">
                         <label for="nip" class="form-label">NIP</label>
 
@@ -254,8 +255,11 @@ include 'config/koneksi.php';
                             name="nip"
                             id="nip"
                             class="form-control"
-                            maxlength="30"
-                            placeholder="Masukkan NIP guru"
+                            maxlength="18"
+                            pattern="[0-9]{1,18}"
+                            inputmode="numeric"
+                            placeholder="Masukkan NIP guru (maksimal 18 digit)"
+                            title="NIP harus berupa angka, maksimal 18 digit"
                             required>
                     </div>
 
