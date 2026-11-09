@@ -458,7 +458,7 @@ $nama_pengguna = $_SESSION['name'] ?? 'Pengguna';
                     Riwayat Pelanggaran
                 </a>
 
-                <a href="rekap_poin.php" class="dashboard-link">
+                <a href="Rekap.php" class="dashboard-link">
                     Rekap Poin
                 </a>
 

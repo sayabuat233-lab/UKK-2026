@@ -161,7 +161,7 @@ $role = $_SESSION['role'] ?? '';
 
             <a href="dashboard_guru.php"
                class="nav-link <?= $current_page === 'dashboard_guru.php' ? 'active' : '' ?>">
-                Dashboard
+                Dashboardplpl
             </a>
 
             <a href="catat_pelanggaran.php"
@@ -179,8 +179,8 @@ $role = $_SESSION['role'] ?? '';
                 Riwayat
             </a>
 
-            <a href="rekap_poin.php"
-               class="nav-link <?= $current_page === 'rekap_poin.php' ? 'active' : '' ?>">
+            <a href="rekap.php"
+               class="nav-link <?= $current_page === 'rekap.php' ? 'active' : '' ?>">
                 Rekap Poin
             </a>
 

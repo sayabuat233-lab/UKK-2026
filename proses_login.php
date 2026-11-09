@@ -10,7 +10,7 @@ include 'config/koneksi.php';
 
 // Pastikan formulir dikirim menggunakan POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: /UKK-2026/login.php');
+    header('Location: login.php');
     exit;
 }
 
@@ -20,7 +20,7 @@ $password = $_POST['password'] ?? '';
 // Periksa input
 if ($email === '' || $password === '') {
     $_SESSION['pesan_error'] = 'Email dan password wajib diisi!';
-    header('Location: /UKK-2026/login.php');
+    header('Location: login.php');
     exit;
 }
 
@@ -48,7 +48,7 @@ if (!$data || !password_verify($password, $data['password'])) {
     mysqli_stmt_close($stmt);
 
     $_SESSION['pesan_error'] = 'Email atau password salah!';
-    header('Location: /UKK-2026/login.php');
+    header('Location: login.php');
     exit;
 }
 
@@ -59,7 +59,7 @@ $role = strtolower(trim($data['role'] ?? ''));
 
 if (!in_array($role, ['admin', 'guru'], true)) {
     $_SESSION['pesan_error'] = 'Role pengguna tidak dikenali!';
-    header('Location: /UKK-2026/login.php');
+    header('Location: login.php');
     exit;
 }
 
@@ -73,10 +73,10 @@ $_SESSION['role'] = $role;
 
 // Arahkan ke dashboard sesuai role
 if ($role === 'admin') {
-    header('Location: /UKK-2026/dashboard.php');
+    header('Location: dashboard.php');
     exit;
 }
 
-header('Location: /UKK-2026/dashboard_guru.php');
+header('Location: dashboard_guru.php');
 exit;
 ?>
