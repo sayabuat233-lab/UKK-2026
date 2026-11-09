@@ -25,24 +25,70 @@ if (!$hasil) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
           rel="stylesheet">
 
-    <!-- DataTables CSS Bootstrap 5 -->
+    <!-- DataTables CSS -->
     <link href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.min.css"
           rel="stylesheet">
 
-    <!-- CSS Layout -->
+    <!-- CSS utama -->
     <link rel="stylesheet" href="layout/style.css">
 
-    <!-- Samakan tampilan dengan kelola_walikelas.php -->
     <style>
+        /* LAYOUT UTAMA */
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100%;
+        }
+
+        .layout-wrapper {
+            display: flex;
+            flex-direction: row;
+            align-items: stretch;
+            width: 100%;
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR KIRI */
+        .layout-sidebar {
+            flex: 0 0 250px;
+            width: 250px;
+            min-width: 250px;
+            min-height: 100vh;
+            background-color: #212529;
+        }
+
+        /* Menetralkan kolom Bootstrap di dalam sidebar.php */
+        .layout-sidebar > .col-md-3,
+        .layout-sidebar > .col-lg-2 {
+            flex: 0 0 100%;
+            width: 100%;
+            max-width: 100%;
+            min-height: 100vh;
+        }
+
+        /* KONTEN KANAN */
+        .layout-content {
+            flex: 1 1 0;
+            min-width: 0;
+            padding: 24px;
+        }
+
+        /* TABEL */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+
         #tabelTahunAjaran {
             width: 100% !important;
             border-collapse: collapse !important;
-            background-color: #ffffff;
+            background-color: #fff;
         }
 
         #tabelTahunAjaran thead th {
             background-color: #212529 !important;
-            color: #ffffff !important;
+            color: #fff !important;
             font-weight: bold;
             border: 1px solid #dee2e6 !important;
             padding: 10px;
@@ -55,16 +101,16 @@ if (!$hasil) {
             vertical-align: middle;
         }
 
-        #tabelTahunAjaran tbody tr:nth-child(odd) {
-            background-color: #f1f1f1 !important;
+        #tabelTahunAjaran tbody tr:nth-child(odd) td {
+            background-color: #f1f1f1;
         }
 
-        #tabelTahunAjaran tbody tr:nth-child(even) {
-            background-color: #ffffff !important;
+        #tabelTahunAjaran tbody tr:nth-child(even) td {
+            background-color: #fff;
         }
 
         #tabelTahunAjaran tbody tr:hover td {
-            background-color: #e9ecef !important;
+            background-color: #e9ecef;
         }
 
         #tabelTahunAjaran .btn-warning {
@@ -83,9 +129,10 @@ if (!$hasil) {
             white-space: nowrap;
         }
 
+        /* DATATABLES */
         .dt-container .dt-paging .dt-paging-button.current {
             background: #0d6efd !important;
-            color: #ffffff !important;
+            color: #fff !important;
             border: 1px solid #0d6efd !important;
         }
 
@@ -95,7 +142,7 @@ if (!$hasil) {
 
         .dt-container .dt-paging .dt-paging-button:hover {
             background: #0d6efd !important;
-            color: #ffffff !important;
+            color: #fff !important;
             border: 1px solid #0d6efd !important;
         }
 
@@ -111,48 +158,75 @@ if (!$hasil) {
             padding: 5px 8px;
         }
 
-        .table-responsive {
-            width: 100%;
+        /* LAYAR KECIL */
+        @media (max-width: 767.98px) {
+            .layout-wrapper {
+                flex-direction: column;
+            }
+
+            .layout-sidebar {
+                flex: 0 0 auto;
+                width: 100%;
+                min-width: 0;
+                min-height: auto;
+            }
+
+            .layout-sidebar > .col-md-3,
+            .layout-sidebar > .col-lg-2 {
+                min-height: auto;
+            }
+
+            .layout-content {
+                width: 100%;
+                padding: 15px;
+            }
         }
     </style>
 </head>
 
 <body>
 
-<div class="container-fluid">
-    <div class="row">
+<div class="layout-wrapper">
 
-        <!-- SIDEBAR -->
+    <!-- SIDEBAR KIRI -->
+    <aside class="layout-sidebar">
         <?php include 'layout/sidebar.php'; ?>
+    </aside>
 
-        <!-- KONTEN -->
-        <main class="col-md-9 col-lg-10 p-4">
+    <!-- KONTEN KANAN -->
+    <main class="layout-content">
 
-            <h1 class="mb-2">Kelola Tahun Ajaran</h1>
+        <h1 class="mb-3">Kelola Tahun Ajaran</h1>
 
-            <p class="mb-4">
-                <a href="dashboard.php">Kembali ke Dashboard</a> |
-                <a href="tambah_tahun_ajaran.php">Tambah Tahun Ajaran</a>
-            </p>
+        <div class="mb-4">
+            <a href="dashboard.php" class="btn btn-secondary btn-sm">
+                Kembali ke Dashboard
+            </a>
 
-            <div class="table-responsive">
-                <table id="tabelTahunAjaran"
-                       class="table table-striped table-bordered table-hover align-middle w-100">
+            <a href="tambah_tahun_ajaran.php" class="btn btn-primary btn-sm">
+                Tambah Tahun Ajaran
+            </a>
+        </div>
 
-                    <thead class="table-dark">
-                        <tr>
-                            <th>ID</th>
-                            <th>Nama Tahun Ajaran</th>
-                            <th>Tanggal Mulai</th>
-                            <th>Tanggal Selesai</th>
-                            <th>Status Aktif</th>
-                            <th>Dibuat</th>
-                            <th>Diubah</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
+        <div class="table-responsive">
 
-                    <tbody>
+            <table id="tabelTahunAjaran"
+                   class="table table-striped table-bordered table-hover align-middle">
+
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nama Tahun Ajaran</th>
+                        <th>Tanggal Mulai</th>
+                        <th>Tanggal Selesai</th>
+                        <th>Status Aktif</th>
+                        <th>Dibuat</th>
+                        <th>Diubah</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+
+                <tbody>
                     <?php while ($row = mysqli_fetch_assoc($hasil)) { ?>
                         <tr>
                             <td>
@@ -187,46 +261,46 @@ if (!$hasil) {
                                 <?= htmlspecialchars($row['updated_at'] ?? '-') ?>
                             </td>
 
-                            <td>
-                                <div class="d-flex gap-1">
-                                    <a href="edit_tahun_ajaran.php?id=<?= urlencode($row['id']) ?>"
-                                       class="btn btn-warning btn-sm">
-                                        Edit
-                                    </a>
+                            <td class="text-nowrap">
+                                <a href="edit_tahun_ajaran.php?id=<?= urlencode($row['id']) ?>"
+                                   class="btn btn-warning btn-sm">
+                                    Edit
+                                </a>
 
-                                    <a href="hapus_tahun_ajaran.php?id=<?= urlencode($row['id']) ?>"
-                                       class="btn btn-danger btn-sm"
-                                       onclick="return confirm('Yakin ingin menghapus tahun ajaran ini?');">
-                                        Hapus
-                                    </a>
-                                </div>
+                                <a href="hapus_tahun_ajaran.php?id=<?= urlencode($row['id']) ?>"
+                                   class="btn btn-danger btn-sm"
+                                   onclick="return confirm('Yakin ingin menghapus tahun ajaran ini?');">
+                                    Hapus
+                                </a>
                             </td>
                         </tr>
                     <?php } ?>
-                    </tbody>
+                </tbody>
 
-                </table>
-            </div>
+            </table>
 
-        </main>
-    </div>
+        </div>
+
+    </main>
+
 </div>
 
 <!-- jQuery -->
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
-<!-- DataTables JavaScript -->
+<!-- DataTables -->
 <script src="https://cdn.datatables.net/2.3.2/js/dataTables.min.js"></script>
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- Pengaturan DataTables -->
 <script>
 $(document).ready(function () {
+
     $('#tabelTahunAjaran').DataTable({
         pageLength: 10,
         lengthMenu: [5, 10, 25, 50, 100],
+
         searching: true,
         ordering: true,
         paging: true,
@@ -260,8 +334,9 @@ $(document).ready(function () {
             }
         }
     });
+
 });
 </script>
 
 </body>
-</html
+</html>

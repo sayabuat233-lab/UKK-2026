@@ -1,4 +1,7 @@
+
 <?php
+// hapus_siswa.php
+
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -13,37 +16,62 @@ if (!isset($_SESSION['id'])) {
 include 'config/koneksi.php';
 
 // Ambil ID siswa dari URL
-if (!isset($_GET['id']) || empty($_GET['id'])) {
-    die("ID siswa tidak ditemukan.");
+if (!isset($_GET['id']) || !ctype_digit($_GET['id']) || (int) $_GET['id'] <= 0) {
+    header("Location: kelola_siswa.php?pesan=id_tidak_valid");
+    exit;
 }
 
 $id = (int) $_GET['id'];
 
 // Cek apakah siswa tersedia
-$cek = mysqli_query(
+$stmt = mysqli_prepare(
     $koneksi,
-    "SELECT id FROM t_siswa WHERE id = $id"
+    "SELECT id FROM t_siswa WHERE id = ?"
 );
 
-if (!$cek) {
-    die("Gagal memeriksa data: " . mysqli_error($koneksi));
+if (!$stmt) {
+    die("Gagal memeriksa data siswa: " . mysqli_error($koneksi));
 }
 
-if (mysqli_num_rows($cek) == 0) {
-    die("Data siswa tidak ditemukan.");
+mysqli_stmt_bind_param($stmt, "i", $id);
+mysqli_stmt_execute($stmt);
+$hasil = mysqli_stmt_get_result($stmt);
+
+if (mysqli_num_rows($hasil) === 0) {
+    mysqli_stmt_close($stmt);
+    header("Location: kelola_siswa.php?pesan=siswa_tidak_ditemukan");
+    exit;
 }
+
+mysqli_stmt_close($stmt);
 
 // Hapus data siswa
-$hapus = mysqli_query(
+$stmt = mysqli_prepare(
     $koneksi,
-    "DELETE FROM t_siswa WHERE id = $id"
+    "DELETE FROM t_siswa WHERE id = ?"
 );
 
-if ($hapus) {
-    header("Location: data_siswa.php?pesan=hapus_berhasil");
+if (!$stmt) {
+    die("Gagal menyiapkan penghapusan: " . mysqli_error($koneksi));
+}
+
+mysqli_stmt_bind_param($stmt, "i", $id);
+$hapus = mysqli_stmt_execute($stmt);
+
+if ($hapus && mysqli_stmt_affected_rows($stmt) > 0) {
+    mysqli_stmt_close($stmt);
+
+    header("Location: kelola_siswa.php?pesan=hapus_berhasil");
     exit;
 } else {
-    echo "Gagal menghapus data siswa: ";
-    echo mysqli_error($koneksi);
+    $error = mysqli_stmt_error($stmt);
+    mysqli_stmt_close($stmt);
+
+    if ($error !== '') {
+        die("Gagal menghapus data siswa. Data mungkin masih digunakan oleh tabel lain. Detail: " . htmlspecialchars($error));
+    }
+
+    header("Location: kelola_siswa.php?pesan=siswa_tidak_ditemukan");
+    exit;
 }
 ?>

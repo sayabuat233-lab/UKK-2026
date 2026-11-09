@@ -28,7 +28,7 @@ if ($tanggal_awal !== '' && $tanggal_akhir !== '') {
 }
 
 if ($id_kelas !== '' && ctype_digit($id_kelas)) {
-    $where[] = "k.id = " . (int) $id_kelas;
+    $where[] = "ps.kelas_id = " . (int) $id_kelas;
 }
 
 $filter = '';
@@ -45,21 +45,13 @@ $sql = "
         ps.keterangan,
         ps.poin,
         s.nis,
-        s.nama AS nama_siswa,
-        k.nama AS nama_kelas,
-        jp.nama_pelanggaran,
-        g.nama AS nama_guru
-    FROM pelanggaran_siswa ps
-    INNER JOIN penempatan_siswa pen
-        ON ps.penempatan_siswa_id = pen.id
-    INNER JOIN data_siswa s
-        ON pen.siswa_id = s.id_siswa
-    INNER JOIN data_kelas k
-        ON pen.kelas_id = k.id
-    LEFT JOIN jenis_pelanggaran jp
-        ON ps.jenis_pelanggaran_id = jp.id
-    LEFT JOIN guru g
-        ON ps.guru_id = g.id
+        ps.nama_siswa AS nama_siswa,
+        ps.nama_kelas AS nama_kelas,
+        ps.nama_pelanggaran AS nama_pelanggaran,
+        ps.nama_guru AS nama_guru
+    FROM t_pelanggaran_siswa ps
+    LEFT JOIN t_siswa s
+        ON ps.siswa_id = s.id
     $filter
     ORDER BY ps.tanggal DESC, ps.id DESC
 ";
@@ -83,7 +75,7 @@ mysqli_data_seek($hasil, 0);
 // Ambil daftar kelas untuk filter
 $query_kelas = mysqli_query(
     $koneksi,
-    "SELECT id, nama FROM data_kelas ORDER BY nama ASC"
+    "SELECT id, nama FROM t_kelas ORDER BY nama ASC"
 );
 
 if (!$query_kelas) {
@@ -105,6 +97,10 @@ if (!$query_kelas) {
         rel="stylesheet">
 
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             margin: 0;
             background: #f3f5fb;
@@ -112,28 +108,49 @@ if (!$query_kelas) {
             color: #172b4d;
         }
 
-        .main-content {
-            margin-left: 292px;
-            padding: 25px;
-            min-height: 100vh;
+        /* Layout utama */
+        .container-fluid {
+            padding: 0;
+            overflow-x: hidden;
         }
 
+        .container-fluid > .row {
+            min-height: 100vh;
+            align-items: stretch;
+        }
+
+        /* Konten utama */
+        .main-content {
+            margin-left: 0;
+            padding: 25px 30px;
+            min-height: 100vh;
+            min-width: 0;
+            width: auto;
+            flex: 1 1 0;
+            overflow-x: hidden;
+        }
+
+        /* Judul halaman */
         .page-title {
             font-size: 30px;
             font-weight: 700;
+            color: #172b4d;
         }
 
+        /* Kartu laporan */
         .report-card {
-            background: white;
+            background: #fff;
             padding: 24px;
             border-radius: 12px;
             border: 1px solid #e8ecf4;
             box-shadow: 0 3px 12px rgba(0, 0, 0, .04);
             margin-bottom: 22px;
+            min-width: 0;
         }
 
+        /* Kartu ringkasan */
         .summary-card {
-            background: white;
+            background: #fff;
             padding: 22px;
             border-radius: 10px;
             border: 1px solid #e8ecf4;
@@ -146,16 +163,45 @@ if (!$query_kelas) {
             color: #3659d9;
         }
 
+        /* Form filter */
+        .form-label {
+            font-weight: 600;
+            color: #172b4d;
+        }
+
+        .form-control,
+        .form-select {
+            min-height: 42px;
+            border-radius: 7px;
+        }
+
+        /* Tabel laporan */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .table {
+            margin-bottom: 0;
+        }
+
         .table th {
             background: #3659d9;
-            color: white;
+            color: #fff;
             white-space: nowrap;
+            vertical-align: middle;
         }
 
         .table td {
             vertical-align: middle;
         }
 
+        /* Tombol */
+        .btn {
+            border-radius: 7px;
+        }
+
+        /* Cetak laporan */
         @media print {
             .sidebar,
             .filter-section,
@@ -164,37 +210,68 @@ if (!$query_kelas) {
                 display: none !important;
             }
 
+            .container-fluid {
+                overflow: visible;
+            }
+
             .main-content {
                 margin: 0;
                 padding: 0;
+                width: 100%;
+                min-height: auto;
+                overflow: visible;
             }
 
             body {
-                background: white;
+                background: #fff;
             }
 
             .report-card,
             .summary-card {
                 box-shadow: none;
                 border: 1px solid #ddd;
+                break-inside: avoid;
             }
 
             .table th {
                 background: #ddd !important;
-                color: black !important;
+                color: #000 !important;
                 print-color-adjust: exact;
                 -webkit-print-color-adjust: exact;
             }
+
+            .table-responsive {
+                overflow: visible;
+            }
+
+            .table {
+                width: 100%;
+                font-size: 10px;
+            }
         }
 
-        @media (max-width: 768px) {
+        /* Tablet dan HP */
+        @media (max-width: 767.98px) {
             .main-content {
                 margin-left: 0;
-                padding: 15px;
+                padding: 18px 14px;
+                width: 100%;
             }
 
             .page-title {
                 font-size: 24px;
+            }
+
+            .report-card {
+                padding: 16px;
+            }
+
+            .summary-card {
+                padding: 18px;
+            }
+
+            .summary-number {
+                font-size: 26px;
             }
         }
     </style>
@@ -208,10 +285,12 @@ if (!$query_kelas) {
         <!-- SIDEBAR -->
         <?php include 'layout/sidebar.php'; ?>
 
-        <!-- KONTEN -->
+        <!-- KONTEN UTAMA -->
         <main class="col main-content">
 
+            <!-- HEADER -->
             <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+
                 <div>
                     <h1 class="page-title mb-2">
                         Laporan Pelanggaran Siswa
@@ -228,9 +307,10 @@ if (!$query_kelas) {
                     class="btn btn-primary no-print">
                     Cetak Laporan
                 </button>
+
             </div>
 
-            <!-- FILTER -->
+            <!-- FILTER LAPORAN -->
             <div class="report-card filter-section">
 
                 <h5 class="mb-3">Filter Laporan</h5>
@@ -313,6 +393,7 @@ if (!$query_kelas) {
 
                 <div class="col-md-6">
                     <div class="summary-card">
+
                         <div class="text-secondary">
                             Total Pelanggaran
                         </div>
@@ -324,11 +405,13 @@ if (!$query_kelas) {
                         <small class="text-secondary">
                             Jumlah catatan pelanggaran
                         </small>
+
                     </div>
                 </div>
 
                 <div class="col-md-6">
                     <div class="summary-card">
+
                         <div class="text-secondary">
                             Total Poin Pelanggaran
                         </div>
@@ -340,6 +423,7 @@ if (!$query_kelas) {
                         <small class="text-secondary">
                             Akumulasi poin seluruh catatan
                         </small>
+
                     </div>
                 </div>
 
@@ -380,9 +464,9 @@ if (!$query_kelas) {
                                         <td><?= $no++ ?></td>
 
                                         <td>
-                                            <?= htmlspecialchars(
-                                                date('d-m-Y', strtotime($data['tanggal']))
-                                            ) ?>
+                                            <?= !empty($data['tanggal'])
+                                                ? htmlspecialchars(date('d-m-Y', strtotime($data['tanggal'])))
+                                                : '-' ?>
                                         </td>
 
                                         <td>
@@ -442,6 +526,7 @@ if (!$query_kelas) {
             </div>
 
         </main>
+
     </div>
 </div>
 

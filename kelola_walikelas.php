@@ -1,3 +1,4 @@
+
 <?php
 // kelola_walikelas.php
 
@@ -22,7 +23,6 @@ if (!$hasil) {
 
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -30,57 +30,125 @@ if (!$hasil) {
     <title>Kelola Wali Kelas</title>
 
     <!-- Bootstrap 5 -->
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
-        rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+          rel="stylesheet">
 
     <!-- DataTables Bootstrap 5 -->
-    <link
-        href="https://cdn.datatables.net/2.3.4/css/dataTables.bootstrap5.min.css"
-        rel="stylesheet">
+    <link href="https://cdn.datatables.net/2.3.4/css/dataTables.bootstrap5.min.css"
+          rel="stylesheet">
 
-    <!-- CSS asli -->
+    <!-- CSS utama -->
     <link rel="stylesheet" href="layout/style.css">
+
+    <style>
+        /* Layout utama: sidebar kiri, konten kanan */
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100%;
+        }
+
+        .layout-wrapper {
+            display: flex;
+            align-items: stretch;
+            width: 100%;
+            min-height: 100vh;
+        }
+
+        /* Kolom sidebar */
+        .layout-sidebar {
+            flex: 0 0 250px;
+            width: 250px;
+            min-height: 100vh;
+            background-color: #212529;
+        }
+
+        /* Kolom konten */
+        .layout-content {
+            flex: 1 1 0;
+            min-width: 0;
+            padding: 24px;
+            overflow-x: auto;
+        }
+
+        /* Memastikan sidebar tidak turun ke bawah */
+        .layout-sidebar > div {
+            width: 100%;
+        }
+
+        /* Tabel */
+        #tabelWaliKelas {
+            width: 100% !important;
+        }
+
+        .table-responsive {
+            width: 100%;
+        }
+
+        /* Tampilan layar kecil */
+        @media (max-width: 767.98px) {
+            .layout-wrapper {
+                flex-direction: column;
+            }
+
+            .layout-sidebar {
+                flex: 0 0 auto;
+                width: 100%;
+                min-height: auto;
+            }
+
+            .layout-content {
+                width: 100%;
+                padding: 15px;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-<div class="container-fluid">
-    <div class="row">
+<div class="layout-wrapper">
 
-        <!-- SIDEBAR -->
+    <!-- SIDEBAR KIRI -->
+    <aside class="layout-sidebar">
         <?php include 'layout/sidebar.php'; ?>
+    </aside>
 
-        <!-- KONTEN -->
-        <main class="col-md-9 col-lg-10 p-4">
+    <!-- KONTEN KANAN -->
+    <main class="layout-content">
 
-            <h1>Kelola Wali Kelas</h1>
+        <h1 class="mb-3">Kelola Wali Kelas</h1>
 
-            <p>
-                <a href="dashboard.php">Kembali ke Dashboard</a> |
-                <a href="tambah_walikelas.php">Tambah Wali Kelas</a>
-            </p>
+        <div class="mb-3">
+            <a href="dashboard.php" class="btn btn-secondary btn-sm">
+                Kembali ke Dashboard
+            </a>
 
-            <div class="table-responsive">
+            <a href="tambah_walikelas.php" class="btn btn-primary btn-sm">
+                Tambah Wali Kelas
+            </a>
+        </div>
 
-                <table id="tabelWaliKelas"
-                       class="table table-striped table-bordered table-hover align-middle w-100">
+        <div class="table-responsive">
 
-                    <thead class="table-dark">
-                        <tr>
-                            <th>ID</th>
-                            <th>Tahun Ajaran ID</th>
-                            <th>Kelas</th>
-                            <th>Guru</th>
-                            <th>Tanggal Mulai</th>
-                            <th>Tanggal Selesai</th>
-                            <th>Status</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
+            <table id="tabelWaliKelas"
+                   class="table table-striped table-bordered table-hover align-middle">
 
-                    <tbody>
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>Tahun Ajaran ID</th>
+                        <th>Kelas</th>
+                        <th>Guru</th>
+                        <th>Tanggal Mulai</th>
+                        <th>Tanggal Selesai</th>
+                        <th>Status</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
 
+                <tbody>
                     <?php while ($row = mysqli_fetch_assoc($hasil)) { ?>
                         <tr>
                             <td>
@@ -108,11 +176,9 @@ if (!$hasil) {
                             </td>
 
                             <td>
-                                <?php
-                                echo ($row['status_aktif'] == 1)
+                                <?= ($row['status_aktif'] == 1)
                                     ? 'Aktif'
-                                    : 'Tidak Aktif';
-                                ?>
+                                    : 'Tidak Aktif'; ?>
                             </td>
 
                             <td class="text-nowrap">
@@ -129,15 +195,14 @@ if (!$hasil) {
                             </td>
                         </tr>
                     <?php } ?>
+                </tbody>
 
-                    </tbody>
+            </table>
 
-                </table>
+        </div>
 
-            </div>
+    </main>
 
-        </main>
-    </div>
 </div>
 
 <!-- jQuery -->
@@ -149,13 +214,11 @@ if (!$hasil) {
 <!-- DataTables Bootstrap 5 -->
 <script src="https://cdn.datatables.net/2.3.4/js/dataTables.bootstrap5.min.js"></script>
 
-<!-- Bootstrap 5 JS -->
+<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- Konfigurasi DataTables -->
 <script>
 $(document).ready(function () {
-
     $('#tabelWaliKelas').DataTable({
         pageLength: 10,
         lengthMenu: [5, 10, 25, 50, 100],
@@ -165,7 +228,6 @@ $(document).ready(function () {
         paging: true,
         info: true,
 
-        // Kolom Aksi tidak ikut diurutkan atau dicari
         columnDefs: [
             {
                 targets: 7,
@@ -192,7 +254,6 @@ $(document).ready(function () {
             }
         }
     });
-
 });
 </script>
 
