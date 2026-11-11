@@ -1,25 +1,37 @@
-```php
 <?php
 // edit_guru.php
+
 include 'includes/cek_session.php';
 include 'config/koneksi.php';
 
+// Ambil ID guru
 if (!isset($_GET['id']) || !ctype_digit($_GET['id'])) {
     header("Location: kelola_guru.php");
     exit;
 }
 
-$id = (int) $_GET['id'];
+$id = (int)$_GET['id'];
 
-$sql = "SELECT * FROM t_guru WHERE id = $id";
-$hasil = mysqli_query($koneksi, $sql);
+// Ambil data guru
+$stmt = mysqli_prepare($koneksi, "SELECT * FROM t_guru WHERE id = ?");
+mysqli_stmt_bind_param($stmt, "i", $id);
+mysqli_stmt_execute($stmt);
+$hasil = mysqli_stmt_get_result($stmt);
 
+// Pastikan data ditemukan
 if (!$hasil || mysqli_num_rows($hasil) == 0) {
     header("Location: kelola_guru.php");
     exit;
 }
 
+// Ambil data ke dalam variabel $data
 $data = mysqli_fetch_assoc($hasil);
+
+// Jika $data tetap kosong, kembali ke daftar
+if (!$data) {
+    header("Location: kelola_guru.php");
+    exit;
+}
 ?>
 
 <!DOCTYPE html>
@@ -31,7 +43,6 @@ $data = mysqli_fetch_assoc($hasil);
 
     <title>Edit Guru - Pelanggaran Siswa</title>
 
-    <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
           rel="stylesheet">
 
@@ -42,7 +53,6 @@ $data = mysqli_fetch_assoc($hasil);
             font-family: Arial, sans-serif;
         }
 
-        /* SIDEBAR TETAP */
         .sidebar {
             width: 292px;
             height: 100vh;
@@ -91,7 +101,6 @@ $data = mysqli_fetch_assoc($hasil);
             color: #dc3545;
         }
 
-        /* KONTEN UTAMA */
         .main-content {
             margin-left: 292px;
             padding: 20px 22px;
@@ -184,21 +193,13 @@ $data = mysqli_fetch_assoc($hasil);
 
         <nav class="nav flex-column">
 
-            <a href="dashboard.php" class="nav-link">
-                Dashboard
-            </a>
+            <a href="dashboard.php" class="nav-link">Dashboard</a>
 
-            <a href="kelola_siswa.php" class="nav-link">
-                Data Siswa
-            </a>
+            <a href="kelola_siswa.php" class="nav-link">Data Siswa</a>
 
-            <a href="kelola_guru.php" class="nav-link active">
-                Data Guru
-            </a>
+            <a href="kelola_guru.php" class="nav-link active">Data Guru</a>
 
-            <a href="kelola_kelas.php" class="nav-link">
-                Data Kelas
-            </a>
+            <a href="kelola_kelas.php" class="nav-link">Data Kelas</a>
 
             <a href="kelola_tahun_ajaran.php" class="nav-link">
                 Data Tahun Ajaran
@@ -216,9 +217,7 @@ $data = mysqli_fetch_assoc($hasil);
                 Kategori Pelanggaran
             </a>
 
-            <a href="about.php" class="nav-link">
-                About Me
-            </a>
+            <a href="about.php" class="nav-link">About Me</a>
 
             <hr>
 
@@ -228,7 +227,6 @@ $data = mysqli_fetch_assoc($hasil);
             </a>
 
         </nav>
-
     </aside>
 
     <!-- KONTEN UTAMA -->
@@ -244,6 +242,13 @@ $data = mysqli_fetch_assoc($hasil);
 
         </div>
 
+        <?php if (isset($_SESSION['pesan_error'])) { ?>
+            <div class="alert alert-danger">
+                <?= htmlspecialchars($_SESSION['pesan_error']) ?>
+            </div>
+            <?php unset($_SESSION['pesan_error']); ?>
+        <?php } ?>
+
         <!-- FORM EDIT GURU -->
         <div class="form-card">
 
@@ -253,124 +258,107 @@ $data = mysqli_fetch_assoc($hasil);
                 Ubah informasi guru sesuai data terbaru.
             </p>
 
-            <form action="proses_edit_guru.php" method="POST">
+            <form action="proses_edit_guru.php"
+                  method="POST"
+                  id="formEditGuru">
 
                 <input type="hidden" name="id"
-                       value="<?= htmlspecialchars((string) $data['id']) ?>">
+                       value="<?= (int)$data['id'] ?>">
 
                 <div class="row g-3">
 
                     <!-- NIP -->
                     <div class="col-md-6">
-
                         <label for="nip" class="form-label">NIP</label>
-
-                        <input
-                            type="text"
-                            class="form-control"
-                            id="nip"
-                            name="nip"
-                            value="<?= htmlspecialchars($data['nip'] ?? '') ?>"
-                            placeholder="Masukkan NIP guru"
-                            required>
-
+                        <input type="text"
+                               class="form-control"
+                               id="nip"
+                               name="nip"
+                               maxlength="18"
+                               value="<?= htmlspecialchars($data['nip'] ?? '') ?>"
+                               required>
                     </div>
 
-                    <!-- NAMA GURU -->
+                    <!-- NAMA -->
                     <div class="col-md-6">
-
                         <label for="nama" class="form-label">Nama Guru</label>
-
-                        <input
-                            type="text"
-                            class="form-control"
-                            id="nama"
-                            name="nama"
-                            value="<?= htmlspecialchars($data['nama'] ?? '') ?>"
-                            placeholder="Masukkan nama guru"
-                            required>
-
+                        <input type="text"
+                               class="form-control"
+                               id="nama"
+                               name="nama"
+                               value="<?= htmlspecialchars($data['nama'] ?? '') ?>"
+                               required>
                     </div>
 
                     <!-- EMAIL -->
                     <div class="col-md-6">
-
                         <label for="email" class="form-label">Email</label>
-
-                        <input
-                            type="email"
-                            class="form-control"
-                            id="email"
-                            name="email"
-                            value="<?= htmlspecialchars($data['email'] ?? '') ?>"
-                            placeholder="contoh@email.com"
-                            required>
-
+                        <input type="email"
+                               class="form-control"
+                               id="email"
+                               name="email"
+                               value="<?= htmlspecialchars($data['email'] ?? '') ?>"
+                               required>
                     </div>
 
-                    <!-- STATUS AKTIF -->
+                    <!-- STATUS -->
                     <div class="col-md-6">
-
-                        <label for="status_aktif" class="form-label">
-                            Status Aktif
-                        </label>
-
-                        <select
-                            class="form-select"
-                            id="status_aktif"
-                            name="status_aktif"
-                            required>
-
+                        <label for="status_aktif" class="form-label">Status Aktif</label>
+                        <select class="form-select"
+                                id="status_aktif"
+                                name="status_aktif"
+                                required>
                             <option value="1"
                                 <?= $data['status_aktif'] == 1 ? 'selected' : '' ?>>
                                 Aktif
                             </option>
-
                             <option value="0"
                                 <?= $data['status_aktif'] == 0 ? 'selected' : '' ?>>
                                 Tidak Aktif
                             </option>
-
                         </select>
-
                     </div>
 
-                    <!-- USER ID -->
+                    <!-- PASSWORD BARU -->
                     <div class="col-md-6">
+                        <label for="password" class="form-label">Password Baru</label>
+                        <input type="password"
+                               class="form-control"
+                               id="password"
+                               name="password"
+                               minlength="8"
+                               autocomplete="new-password"
+                               placeholder="Masukkan password baru">
+                        <small class="text-secondary">
+                            Kosongkan jika tidak ingin mengganti password.
+                        </small>
+                    </div>
 
-                        <label for="user_id" class="form-label">
-                            User ID
-                        </label>
-
-                        <input
-                            type="number"
-                            class="form-control"
-                            id="user_id"
-                            name="user_id"
-                            value="<?= htmlspecialchars((string) ($data['user_id'] ?? '')) ?>"
-                            placeholder="Masukkan User ID">
-
-                        <div class="form-text">
-                            Isi sesuai ID pengguna yang terhubung dengan guru.
-                        </div>
-
+                    <!-- KONFIRMASI PASSWORD -->
+                    <div class="col-md-6">
+                        <label for="konfirmasi_password" class="form-label">Konfirmasi Password</label>
+                        <input type="password"
+                               class="form-control"
+                               id="konfirmasi_password"
+                               name="konfirmasi_password"
+                               autocomplete="new-password"
+                               placeholder="Ulangi password baru">
+                        <small id="pesanPassword" class="form-text">
+                            Password harus sama.
+                        </small>
                     </div>
 
                 </div>
 
                 <hr class="my-4">
 
-                <!-- TOMBOL -->
                 <div class="d-flex justify-content-end gap-2 flex-wrap">
-
                     <a href="kelola_guru.php" class="btn btn-secondary">
                         Batal
                     </a>
-
                     <button type="submit" class="btn btn-primary">
                         Update Data Guru
                     </button>
-
                 </div>
 
             </form>
@@ -379,8 +367,52 @@ $data = mysqli_fetch_assoc($hasil);
 
     </main>
 
+    <!-- VALIDASI PASSWORD -->
+    <script>
+        const form = document.getElementById('formEditGuru');
+        const password = document.getElementById('password');
+        const konfirmasi = document.getElementById('konfirmasi_password');
+        const pesan = document.getElementById('pesanPassword');
+
+        function cekPassword() {
+            if (password.value === '' && konfirmasi.value === '') {
+                konfirmasi.setCustomValidity('');
+                pesan.textContent = 'Kosongkan jika tidak ingin mengganti password.';
+                pesan.className = 'form-text';
+                return;
+            }
+
+            if (password.value.length < 8) {
+                konfirmasi.setCustomValidity('Password minimal 8 karakter.');
+                pesan.textContent = 'Password minimal 8 karakter.';
+                pesan.className = 'form-text text-danger';
+                return;
+            }
+
+            if (password.value !== konfirmasi.value) {
+                konfirmasi.setCustomValidity('Password tidak sama.');
+                pesan.textContent = 'Konfirmasi password tidak cocok!';
+                pesan.className = 'form-text text-danger';
+            } else {
+                konfirmasi.setCustomValidity('');
+                pesan.textContent = 'Password cocok!';
+                pesan.className = 'form-text text-success';
+            }
+        }
+
+        password.addEventListener('input', cekPassword);
+        konfirmasi.addEventListener('input', cekPassword);
+
+        form.addEventListener('submit', function(e) {
+            cekPassword();
+            if (!form.checkValidity()) {
+                e.preventDefault();
+                form.reportValidity();
+            }
+        });
+    </script>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>
-```

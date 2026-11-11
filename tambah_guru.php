@@ -1,5 +1,3 @@
-
-<?php
 // tambah_guru.php
 
 include 'includes/cek_session.php';
@@ -15,9 +13,7 @@ include 'config/koneksi.php';
 
     <title>Tambah Guru - Pelanggaran Siswa</title>
 
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
-        rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
         body {
@@ -162,41 +158,23 @@ include 'config/koneksi.php';
 
         <nav class="nav flex-column">
 
-            <a href="dashboard.php" class="nav-link">
-                Dashboard
-            </a>
+            <a href="dashboard.php" class="nav-link">Dashboard</a>
 
-            <a href="kelola_siswa.php" class="nav-link">
-                Data Siswa
-            </a>
+            <a href="kelola_siswa.php" class="nav-link">Data Siswa</a>
 
-            <a href="kelola_guru.php" class="nav-link active">
-                Data Guru
-            </a>
+            <a href="kelola_guru.php" class="nav-link active">Data Guru</a>
 
-            <a href="kelola_kelas.php" class="nav-link">
-                Data Kelas
-            </a>
+            <a href="kelola_kelas.php" class="nav-link">Data Kelas</a>
 
-            <a href="kelola_tahun_ajaran.php" class="nav-link">
-                Data Tahun Ajaran
-            </a>
+            <a href="kelola_tahun_ajaran.php" class="nav-link">Data Tahun Ajaran</a>
 
-            <a href="kelola_walikelas.php" class="nav-link">
-                Data Wali Kelas
-            </a>
+            <a href="kelola_walikelas.php" class="nav-link">Data Wali Kelas</a>
 
-            <a href="penempatan_siswa.php" class="nav-link">
-                Penempatan Siswa
-            </a>
+            <a href="penempatan_siswa.php" class="nav-link">Penempatan Siswa</a>
 
-            <a href="kelola_pelanggaran_kategori.php" class="nav-link">
-                Kategori Pelanggaran
-            </a>
+            <a href="kelola_pelanggaran_kategori.php" class="nav-link">Kategori Pelanggaran</a>
 
-            <a href="about_me.php" class="nav-link">
-                About Me
-            </a>
+            <a href="about_me.php" class="nav-link">About Me</a>
 
             <hr>
 
@@ -216,6 +194,7 @@ include 'config/koneksi.php';
 
             <div>
                 <h1 class="page-title mb-2">Tambah Guru</h1>
+
                 <p class="text-secondary mb-0">
                     Masukkan data guru sesuai struktur database.
                 </p>
@@ -242,14 +221,15 @@ include 'config/koneksi.php';
                 Lengkapi seluruh kolom yang wajib diisi.
             </p>
 
-            <form action="proses_tambah_guru.php" method="POST">
+            <form action="proses_tambah_guru.php"
+                  method="POST"
+                  id="formGuru">
 
                 <div class="row g-3">
 
-                    <!-- NIP MAKSIMAL 18 DIGIT -->
+                    <!-- NIP -->
                     <div class="col-md-6">
                         <label for="nip" class="form-label">NIP</label>
-
                         <input
                             type="text"
                             name="nip"
@@ -259,13 +239,12 @@ include 'config/koneksi.php';
                             pattern="[0-9]{1,18}"
                             inputmode="numeric"
                             placeholder="Masukkan NIP guru (maksimal 18 digit)"
-                            title="NIP harus berupa angka, maksimal 18 digit"
                             required>
                     </div>
 
+                    <!-- NAMA GURU -->
                     <div class="col-md-6">
                         <label for="nama" class="form-label">Nama Guru</label>
-
                         <input
                             type="text"
                             name="nama"
@@ -276,9 +255,9 @@ include 'config/koneksi.php';
                             required>
                     </div>
 
+                    <!-- EMAIL -->
                     <div class="col-md-6">
                         <label for="email" class="form-label">Email</label>
-
                         <input
                             type="email"
                             name="email"
@@ -289,39 +268,50 @@ include 'config/koneksi.php';
                             required>
                     </div>
 
+                    <!-- PASSWORD -->
                     <div class="col-md-6">
-                        <label for="user_id" class="form-label">
-                            ID User
-                        </label>
-
+                        <label for="password" class="form-label">Password</label>
                         <input
-                            type="number"
-                            name="user_id"
-                            id="user_id"
+                            type="password"
+                            name="password"
+                            id="password"
                             class="form-control"
-                            min="1"
-                            placeholder="Masukkan ID user yang sudah terdaftar"
+                            minlength="8"
+                            autocomplete="new-password"
+                            placeholder="Masukkan password minimal 8 karakter"
                             required>
-
                         <small class="text-secondary">
-                            Isi dengan ID user yang valid pada tabel akun pengguna.
+                            Password minimal 8 karakter.
                         </small>
                     </div>
 
+                    <!-- KONFIRMASI PASSWORD -->
                     <div class="col-md-6">
-                        <label for="status_aktif" class="form-label">
-                            Status Guru
-                        </label>
+                        <label for="konfirmasi_password" class="form-label">Konfirmasi Password</label>
+                        <input
+                            type="password"
+                            name="konfirmasi_password"
+                            id="konfirmasi_password"
+                            class="form-control"
+                            minlength="8"
+                            autocomplete="new-password"
+                            placeholder="Masukkan ulang password"
+                            required>
+                        <small id="pesanPassword" class="text-secondary">
+                            Masukkan password yang sama.
+                        </small>
+                    </div>
 
+                    <!-- STATUS GURU -->
+                    <div class="col-md-6">
+                        <label for="status_aktif" class="form-label">Status Guru</label>
                         <select
                             name="status_aktif"
                             id="status_aktif"
                             class="form-select"
                             required>
-
                             <option value="1">Aktif</option>
                             <option value="0">Tidak Aktif</option>
-
                         </select>
                     </div>
 
@@ -330,15 +320,12 @@ include 'config/koneksi.php';
                 <hr class="my-4">
 
                 <div class="d-flex flex-wrap gap-2">
-
                     <button type="submit" class="btn btn-primary">
                         Simpan Data Guru
                     </button>
-
                     <a href="kelola_guru.php" class="btn btn-outline-secondary">
                         Batal
                     </a>
-
                 </div>
 
             </form>
@@ -346,6 +333,44 @@ include 'config/koneksi.php';
         </div>
 
     </main>
+
+    <!-- VALIDASI PASSWORD -->
+    <script>
+        const form = document.getElementById('formGuru');
+        const password = document.getElementById('password');
+        const konfirmasi = document.getElementById('konfirmasi_password');
+        const pesan = document.getElementById('pesanPassword');
+
+        function cekPassword() {
+            if (konfirmasi.value === '') {
+                konfirmasi.setCustomValidity('');
+                pesan.textContent = 'Masukkan password yang sama.';
+                pesan.className = 'text-secondary';
+                return;
+            }
+
+            if (password.value !== konfirmasi.value) {
+                konfirmasi.setCustomValidity('Konfirmasi password tidak sama.');
+                pesan.textContent = 'Password tidak cocok!';
+                pesan.className = 'text-danger';
+            } else {
+                konfirmasi.setCustomValidity('');
+                pesan.textContent = 'Password cocok!';
+                pesan.className = 'text-success';
+            }
+        }
+
+        password.addEventListener('input', cekPassword);
+        konfirmasi.addEventListener('input', cekPassword);
+
+        form.addEventListener('submit', function(e) {
+            cekPassword();
+            if (!form.checkValidity()) {
+                e.preventDefault();
+                form.reportValidity();
+            }
+        });
+    </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 

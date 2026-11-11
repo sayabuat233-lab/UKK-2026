@@ -28,7 +28,7 @@ if ($tanggal_awal !== '' && $tanggal_akhir !== '') {
 }
 
 if ($id_kelas !== '' && ctype_digit($id_kelas)) {
-    $where[] = "ps.kelas_id = " . (int) $id_kelas;
+    $where[] = "ps.kelas_id = " . (int)$id_kelas;
 }
 
 $filter = '';
@@ -37,7 +37,7 @@ if (!empty($where)) {
     $filter = ' WHERE ' . implode(' AND ', $where);
 }
 
-// Ambil data laporan
+// Query laporan
 $sql = "
     SELECT
         ps.id,
@@ -50,8 +50,7 @@ $sql = "
         ps.nama_pelanggaran AS nama_pelanggaran,
         ps.nama_guru AS nama_guru
     FROM t_pelanggaran_siswa ps
-    LEFT JOIN t_siswa s
-        ON ps.siswa_id = s.id
+    LEFT JOIN t_siswa s ON ps.siswa_id = s.id
     $filter
     ORDER BY ps.tanggal DESC, ps.id DESC
 ";
@@ -62,17 +61,17 @@ if (!$hasil) {
     die('Query laporan gagal: ' . mysqli_error($koneksi));
 }
 
-// Hitung jumlah pelanggaran dan total poin
+// Hitung total pelanggaran dan poin
 $total_data = mysqli_num_rows($hasil);
 $total_poin = 0;
 
 while ($baris = mysqli_fetch_assoc($hasil)) {
-    $total_poin += (int) $baris['poin'];
+    $total_poin += (int)$baris['poin'];
 }
 
 mysqli_data_seek($hasil, 0);
 
-// Ambil daftar kelas untuk filter
+// Ambil daftar kelas
 $query_kelas = mysqli_query(
     $koneksi,
     "SELECT id, nama FROM t_kelas ORDER BY nama ASC"
@@ -92,9 +91,8 @@ if (!$query_kelas) {
 
     <title>Laporan Pelanggaran Siswa</title>
 
-    <link
-        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
-        rel="stylesheet">
+    <!-- Bootstrap 5.3 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
         * {
@@ -108,7 +106,6 @@ if (!$query_kelas) {
             color: #172b4d;
         }
 
-        /* Layout utama */
         .container-fluid {
             padding: 0;
             overflow-x: hidden;
@@ -119,25 +116,21 @@ if (!$query_kelas) {
             align-items: stretch;
         }
 
-        /* Konten utama */
         .main-content {
             margin-left: 0;
             padding: 25px 30px;
             min-height: 100vh;
             min-width: 0;
-            width: auto;
             flex: 1 1 0;
             overflow-x: hidden;
         }
 
-        /* Judul halaman */
         .page-title {
             font-size: 30px;
             font-weight: 700;
             color: #172b4d;
         }
 
-        /* Kartu laporan */
         .report-card {
             background: #fff;
             padding: 24px;
@@ -148,7 +141,6 @@ if (!$query_kelas) {
             min-width: 0;
         }
 
-        /* Kartu ringkasan */
         .summary-card {
             background: #fff;
             padding: 22px;
@@ -163,7 +155,6 @@ if (!$query_kelas) {
             color: #3659d9;
         }
 
-        /* Form filter */
         .form-label {
             font-weight: 600;
             color: #172b4d;
@@ -175,33 +166,71 @@ if (!$query_kelas) {
             border-radius: 7px;
         }
 
-        /* Tabel laporan */
+        /* TABEL BOOTSTRAP WARNA HITAM */
         .table-responsive {
             width: 100%;
             overflow-x: auto;
+            border-radius: 5px;
         }
 
         .table {
             margin-bottom: 0;
+            border-color: #dee2e6;
+            background: #fff;
         }
 
-        .table th {
-            background: #3659d9;
-            color: #fff;
+        .table thead th {
+            background-color: #212529 !important;
+            color: #fff !important;
             white-space: nowrap;
             vertical-align: middle;
+            font-weight: 600;
+            padding: 10px;
+            border: 1px solid #dee2e6;
         }
 
-        .table td {
+        .table tbody td {
             vertical-align: middle;
+            padding: 10px;
+            color: #212529;
+            border: 1px solid #dee2e6;
         }
 
-        /* Tombol */
+        .table-striped > tbody > tr:nth-of-type(odd) > * {
+            background-color: #f8f9fa;
+            color: #212529;
+        }
+
         .btn {
             border-radius: 7px;
         }
 
-        /* Cetak laporan */
+        /* RESPONSIVE HP DAN TABLET */
+        @media (max-width: 767.98px) {
+            .main-content {
+                margin-left: 0;
+                padding: 18px 14px;
+                width: 100%;
+            }
+
+            .page-title {
+                font-size: 24px;
+            }
+
+            .report-card {
+                padding: 16px;
+            }
+
+            .summary-card {
+                padding: 18px;
+            }
+
+            .summary-number {
+                font-size: 26px;
+            }
+        }
+
+        /* CETAK LAPORAN */
         @media print {
             .sidebar,
             .filter-section,
@@ -233,13 +262,6 @@ if (!$query_kelas) {
                 break-inside: avoid;
             }
 
-            .table th {
-                background: #ddd !important;
-                color: #000 !important;
-                print-color-adjust: exact;
-                -webkit-print-color-adjust: exact;
-            }
-
             .table-responsive {
                 overflow: visible;
             }
@@ -248,30 +270,12 @@ if (!$query_kelas) {
                 width: 100%;
                 font-size: 10px;
             }
-        }
 
-        /* Tablet dan HP */
-        @media (max-width: 767.98px) {
-            .main-content {
-                margin-left: 0;
-                padding: 18px 14px;
-                width: 100%;
-            }
-
-            .page-title {
-                font-size: 24px;
-            }
-
-            .report-card {
-                padding: 16px;
-            }
-
-            .summary-card {
-                padding: 18px;
-            }
-
-            .summary-number {
-                font-size: 26px;
+            .table thead th {
+                background: #212529 !important;
+                color: #fff !important;
+                print-color-adjust: exact;
+                -webkit-print-color-adjust: exact;
             }
         }
     </style>
@@ -358,13 +362,15 @@ if (!$query_kelas) {
                                 <option value="">Semua Kelas</option>
 
                                 <?php while ($kelas = mysqli_fetch_assoc($query_kelas)) { ?>
+
                                     <option
-                                        value="<?= (int) $kelas['id'] ?>"
-                                        <?= ($id_kelas !== '' && (string) $kelas['id'] === $id_kelas) ? 'selected' : '' ?>>
+                                        value="<?= (int)$kelas['id'] ?>"
+                                        <?= ($id_kelas !== '' && (string)$kelas['id'] === $id_kelas) ? 'selected' : '' ?>>
 
                                         <?= htmlspecialchars($kelas['nama']) ?>
 
                                     </option>
+
                                 <?php } ?>
 
                             </select>
@@ -432,13 +438,15 @@ if (!$query_kelas) {
             <!-- TABEL LAPORAN -->
             <div class="report-card">
 
-                <h5 class="mb-3">Detail Laporan Pelanggaran</h5>
+                <h5 class="mb-3">
+                    Detail Laporan Pelanggaran
+                </h5>
 
                 <div class="table-responsive">
 
-                    <table class="table table-bordered table-striped">
+                    <table class="table table-bordered table-striped table-hover align-middle">
 
-                        <thead>
+                        <thead class="table-dark">
                             <tr>
                                 <th>No.</th>
                                 <th>Tanggal</th>
@@ -487,7 +495,7 @@ if (!$query_kelas) {
 
                                         <td class="text-center">
                                             <span class="badge bg-danger">
-                                                <?= (int) $data['poin'] ?>
+                                                <?= (int)$data['poin'] ?>
                                             </span>
                                         </td>
 
@@ -530,6 +538,7 @@ if (!$query_kelas) {
     </div>
 </div>
 
+<!-- BOOTSTRAP JAVASCRIPT -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
