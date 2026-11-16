@@ -1,8 +1,4 @@
-// tambah_guru.php
 
-include 'includes/cek_session.php';
-include 'config/koneksi.php';
-?>
 
 <!DOCTYPE html>
 <html lang="id">

@@ -1,4 +1,4 @@
-```php
+
 <?php
 // tambah_kelas.php
 include 'includes/cek_session.php';
@@ -24,7 +24,7 @@ include 'includes/cek_session.php';
             font-family: Arial, sans-serif;
         }
 
-        /* SIDEBAR TETAP */
+        /* SIDEBAR */
         .sidebar {
             width: 292px;
             height: 100vh;
@@ -204,7 +204,8 @@ include 'includes/cek_session.php';
 
             <hr>
 
-            <a href="logout.php" class="nav-link logout"
+            <a href="logout.php"
+               class="nav-link logout"
                onclick="return confirm('Yakin ingin logout?')">
                 Logout
             </a>
@@ -263,13 +264,18 @@ include 'includes/cek_session.php';
                             Tingkat
                         </label>
 
-                        <input
-                            type="text"
-                            class="form-control"
+                        <select
+                            class="form-select"
                             id="tingkat"
                             name="tingkat"
-                            placeholder="Contoh: X, XI, XII"
                             required>
+
+                            <option value="">-- Pilih Tingkat --</option>
+                            <option value="X">X</option>
+                            <option value="XI">XI</option>
+                            <option value="XII">XII</option>
+
+                        </select>
 
                     </div>
 
@@ -314,7 +320,26 @@ include 'includes/cek_session.php';
 
                 <hr class="my-4">
 
-                <!-- TOMBOL -->
+                <!-- TOMBOL BATAL DAN SIMPAN -->
                 <div class="d-flex justify-content-end gap-2 flex-wrap">
 
-                   
+                    <a href="kelola_kelas.php" class="btn btn-secondary">
+                        Batal
+                    </a>
+
+                    <button type="submit" class="btn btn-primary">
+                        Simpan
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
